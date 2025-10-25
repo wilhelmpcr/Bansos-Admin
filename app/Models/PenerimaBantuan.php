@@ -11,7 +11,7 @@ class PenerimaBantuan extends Model
 
     protected $table = 'penerima_bantuan';
     protected $primaryKey = 'penerima_id';
-    protected $fillable = ['program_id', 'warga_id', 'keterangan'];
+    protected $fillable = ['warga_id', 'keterangan'];
 
     public function warga()
     {

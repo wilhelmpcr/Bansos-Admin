@@ -27,7 +27,8 @@
 
 <body>
     <div class="container-fluid position-relative bg-white d-flex p-0">
-        <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+        <div id="spinner"
+            class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
             <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
                 <span class="sr-only">Loading...</span>
             </div>
@@ -39,8 +40,11 @@
                 </a>
                 <div class="d-flex align-items-center ms-4 mb-4">
                     <div class="position-relative">
-                        <img class="rounded-circle" src="{{ asset('assets-admin/img/user.jpg') }}" alt="" style="width: 40px; height: 40px;">
-                        <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
+                        <img class="rounded-circle" src="{{ asset('assets-admin/img/user.jpg') }}" alt=""
+                            style="width: 40px; height: 40px;">
+                        <div
+                            class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1">
+                        </div>
                     </div>
                     <div class="ms-3">
                         <h6 class="mb-0">Jhon Doe</h6>
@@ -48,10 +52,21 @@
                     </div>
                 </div>
                 <div class="navbar-nav w-100">
-                    <a href="{{ url('/') }}" class="nav-item nav-link active"><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
-                    <a href="{{ url('/warga') }}" class="nav-item nav-link active"><i class="fa fa-id-user"></i>Warga</a>
+                    <a href="{{ url('/') }}" class="nav-item nav-link active"><i
+                            class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
+                    <a href="{{ url('/warga') }}" class="nav-item nav-link active">
+                        <i class="fa fa-user"></i> Warga
+                    </a>
+                    <a href="{{ url('/user') }}" class="nav-item nav-link active">
+                        <i class="fa fa-user"></i> User
+                    </a>
+                    <a href="{{ url('/program_bantuan') }}" class="nav-item nav-link active">
+                        <i class="fa fa-gift"></i> Program Bantuan
+                    </a>
+
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-laptop me-2"></i>Elements</a>
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i
+                                class="fa fa-laptop me-2"></i>Elements</a>
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="{{ url('/button') }}" class="dropdown-item">Buttons</a>
                             <a href="{{ url('/typography') }}" class="dropdown-item">Typography</a>
@@ -59,11 +74,14 @@
                         </div>
                     </div>
                     <a href="{{ url('/widget') }}" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Widgets</a>
-                    <a href="{{ url('/form') }}" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>Forms</a>
+                    <a href="{{ url('/form') }}" class="nav-item nav-link"><i
+                            class="fa fa-keyboard me-2"></i>Forms</a>
                     <a href="{{ url('/table') }}" class="nav-item nav-link"><i class="fa fa-table me-2"></i>Tables</a>
-                    <a href="{{ url('/chart') }}" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Charts</a>
+                    <a href="{{ url('/chart') }}" class="nav-item nav-link"><i
+                            class="fa fa-chart-bar me-2"></i>Charts</a>
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="far fa-file-alt me-2"></i>Pages</a>
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i
+                                class="far fa-file-alt me-2"></i>Pages</a>
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="{{ url('/signin') }}" class="dropdown-item">Sign In</a>
                             <a href="{{ url('/signup') }}" class="dropdown-item">Sign Up</a>
@@ -94,7 +112,8 @@
                         <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
                             <a href="#" class="dropdown-item">
                                 <div class="d-flex align-items-center">
-                                    <img class="rounded-circle" src="{{ asset('assets-admin/img/user.jpg') }}" alt="" style="width: 40px; height: 40px;">
+                                    <img class="rounded-circle" src="{{ asset('assets-admin/img/user.jpg') }}"
+                                        alt="" style="width: 40px; height: 40px;">
                                     <div class="ms-2">
                                         <h6 class="fw-normal mb-0">Jhon send you a message</h6>
                                         <small>15 minutes ago</small>
@@ -104,7 +123,8 @@
                             <hr class="dropdown-divider">
                             <a href="#" class="dropdown-item">
                                 <div class="d-flex align-items-center">
-                                    <img class="rounded-circle" src="{{ asset('assets-admin/img/user.jpg') }}" alt="" style="width: 40px; height: 40px;">
+                                    <img class="rounded-circle" src="{{ asset('assets-admin/img/user.jpg') }}"
+                                        alt="" style="width: 40px; height: 40px;">
                                     <div class="ms-2">
                                         <h6 class="fw-normal mb-0">Jhon send you a message</h6>
                                         <small>15 minutes ago</small>
@@ -114,7 +134,8 @@
                             <hr class="dropdown-divider">
                             <a href="#" class="dropdown-item">
                                 <div class="d-flex align-items-center">
-                                    <img class="rounded-circle" src="{{ asset('assets-admin/img/user.jpg') }}" alt="" style="width: 40px; height: 40px;">
+                                    <img class="rounded-circle" src="{{ asset('assets-admin/img/user.jpg') }}"
+                                        alt="" style="width: 40px; height: 40px;">
                                     <div class="ms-2">
                                         <h6 class="fw-normal mb-0">Jhon send you a message</h6>
                                         <small>15 minutes ago</small>
@@ -151,7 +172,8 @@
                     </div>
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            <img class="rounded-circle me-lg-2" src="{{ asset('assets-admin/img/user.jpg') }}" alt="" style="width: 40px; height: 40px;">
+                            <img class="rounded-circle me-lg-2" src="{{ asset('assets-admin/img/user.jpg') }}"
+                                alt="" style="width: 40px; height: 40px;">
                             <span class="d-none d-lg-inline-flex">John Doe</span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
@@ -303,7 +325,9 @@
                                 <a href="">Show All</a>
                             </div>
                             <div class="d-flex align-items-center border-bottom py-3">
-                                <img class="rounded-circle flex-shrink-0" src="{{ asset('assets-admin/img/user.jpg') }}" alt="" style="width: 40px; height: 40px;">
+                                <img class="rounded-circle flex-shrink-0"
+                                    src="{{ asset('assets-admin/img/user.jpg') }}" alt=""
+                                    style="width: 40px; height: 40px;">
                                 <div class="w-100 ms-3">
                                     <div class="d-flex w-100 justify-content-between">
                                         <h6 class="mb-0">Jhon Doe</h6>
@@ -313,7 +337,9 @@
                                 </div>
                             </div>
                             <div class="d-flex align-items-center border-bottom py-3">
-                                <img class="rounded-circle flex-shrink-0" src="{{ asset('assets-admin/img/user.jpg') }}" alt="" style="width: 40px; height: 40px;">
+                                <img class="rounded-circle flex-shrink-0"
+                                    src="{{ asset('assets-admin/img/user.jpg') }}" alt=""
+                                    style="width: 40px; height: 40px;">
                                 <div class="w-100 ms-3">
                                     <div class="d-flex w-100 justify-content-between">
                                         <h6 class="mb-0">Jhon Doe</h6>
@@ -323,7 +349,9 @@
                                 </div>
                             </div>
                             <div class="d-flex align-items-center border-bottom py-3">
-                                <img class="rounded-circle flex-shrink-0" src="{{ asset('assets-admin/img/user.jpg') }}" alt="" style="width: 40px; height: 40px;">
+                                <img class="rounded-circle flex-shrink-0"
+                                    src="{{ asset('assets-admin/img/user.jpg') }}" alt=""
+                                    style="width: 40px; height: 40px;">
                                 <div class="w-100 ms-3">
                                     <div class="d-flex w-100 justify-content-between">
                                         <h6 class="mb-0">Jhon Doe</h6>
@@ -333,7 +361,9 @@
                                 </div>
                             </div>
                             <div class="d-flex align-items-center pt-3">
-                                <img class="rounded-circle flex-shrink-0" src="{{ asset('assets-admin/img/user.j') }}pg" alt="" style="width: 40px; height: 40px;">
+                                <img class="rounded-circle flex-shrink-0"
+                                    src="{{ asset('assets-admin/img/user.j') }}pg" alt=""
+                                    style="width: 40px; height: 40px;">
                                 <div class="w-100 ms-3">
                                     <div class="d-flex w-100 justify-content-between">
                                         <h6 class="mb-0">Jhon Doe</h6>
@@ -424,7 +454,7 @@
                     </div>
                 </div>
             </div>
-            </div>
+        </div>
         <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
     </div>
 
