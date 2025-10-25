@@ -1,0 +1,13 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\WargaController;
+use App\Http\Controllers\DashboardController;
+
+Route::get('/', function () {
+    return view('welcome'); // atau ganti dengan view lain
+});
+
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+
+Route::resource('warga', WargaController::class);
