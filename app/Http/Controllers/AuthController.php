@@ -1,9 +1,9 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -20,12 +20,12 @@ class AuthController extends Controller
         // Validasi input
         $request->validate([
             'username' => 'required',
-            'password' => ['required', 'min:3', 'regex:/[A-Z]/']
+            'password' => ['required', 'min:3', 'regex:/[A-Z]/'],
         ], [
             'username.required' => 'Username wajib diisi.',
             'password.required' => 'Password wajib diisi.',
-            'password.min' => 'Password minimal 3 karakter.',
-            'password.regex' => 'Password harus mengandung huruf kapital.'
+            'password.min'      => 'Password minimal 3 karakter.',
+            'password.regex'    => 'Password harus mengandung huruf kapital.',
         ]);
 
         // Cek user di database
@@ -43,7 +43,7 @@ class AuthController extends Controller
     public function loginSuccess()
     {
         $username = session('username');
-        if (!$username) {
+        if (! $username) {
             return redirect()->route('login.form')->with('error', 'Silakan login terlebih dahulu.');
         }
         return view('auth.login-success', compact('username'));
@@ -62,24 +62,24 @@ class AuthController extends Controller
         // Validasi input
         $request->validate([
             'username' => 'required|unique:users,name',
-            'email' => 'required|email|unique:users,email',
-            'password' => ['required', 'min:3', 'regex:/[A-Z]/']
+            'email'    => 'required|email|unique:users,email',
+            'password' => ['required', 'min:3', 'regex:/[A-Z]/'],
         ], [
             'username.required' => 'Username wajib diisi.',
-            'username.unique' => 'Username sudah digunakan.',
-            'email.required' => 'Email wajib diisi.',
-            'email.email' => 'Format email tidak valid.',
-            'email.unique' => 'Email sudah terdaftar.',
+            'username.unique'   => 'Username sudah digunakan.',
+            'email.required'    => 'Email wajib diisi.',
+            'email.email'       => 'Format email tidak valid.',
+            'email.unique'      => 'Email sudah terdaftar.',
             'password.required' => 'Password wajib diisi.',
-            'password.min' => 'Password minimal 3 karakter.',
-            'password.regex' => 'Password harus mengandung huruf kapital.'
+            'password.min'      => 'Password minimal 3 karakter.',
+            'password.regex'    => 'Password harus mengandung huruf kapital.',
         ]);
 
         // Simpan user baru
         User::create([
-            'name' => $request->username,
-            'email' => $request->email,
-            'password' => Hash::make($request->password)
+            'name'     => $request->username,
+            'email'    => $request->email,
+            'password' => Hash::make($request->password),
         ]);
 
         return redirect()->route('register.success')->with('username', $request->username);
@@ -90,5 +90,13 @@ class AuthController extends Controller
     {
         $username = session('username');
         return view('auth.register-success', compact('username'));
+    }
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login.form')->with('success', 'Logout berhasil.');
     }
 }

@@ -18,6 +18,9 @@ Route::get('/login', [AuthController::class, 'showLogin'])->name('login.form');
 Route::post('/login', [AuthController::class, 'login'])->name('login.process');
 Route::get('/login-success', [AuthController::class, 'loginSuccess'])->name('login.success');
 
+//logout
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+
 // Register
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register.form');
 Route::post('/register', [AuthController::class, 'register'])->name('register.process');
@@ -37,5 +40,6 @@ Route::resource('penerima_bantuan', PenerimaBantuanController::class);
 Route::resource('program_bantuan', ProgramBantuanController::class);
 
 Route::resource('user', UserController::class);
+
 
 
