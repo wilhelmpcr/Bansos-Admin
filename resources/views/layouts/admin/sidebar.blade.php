@@ -2,14 +2,8 @@
     <nav class="navbar bg-light navbar-light">
         <!-- LOGO BANSOS YANG MENARIK -->
         <a href="{{ url('/') }}" class="navbar-brand mx-4 mb-3">
-            <svg width="180" height="100" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg" style="fill: #fff; background-color: #3a7d44; border-radius: 8px; padding: 10px;">
-                <!-- Gambar 3 siluet orang -->
-                <path d="M80,40 C90,30 110,30 120,40 C125,45 125,60 120,65 C110,70 90,70 80,65 C75,60 75,45 80,40 Z" stroke="#000" stroke-width="2" fill="#fff"/>
-                <path d="M60,45 C70,35 90,35 100,45 C105,50 105,65 100,70 C90,75 70,75 60,70 C55,65 55,50 60,45 Z" stroke="#000" stroke-width="2" fill="#fff"/>
-                <path d="M100,45 C110,35 130,35 140,45 C145,50 145,65 140,70 C130,75 110,75 100,70 C95,65 95,50 100,45 Z" stroke="#000" stroke-width="2" fill="#fff"/>
-                <!-- Teks BANSOS -->
-                <text x="100" y="90" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#fff">BANSOS</text>
-            </svg>
+            <img src="{{ asset('assets-admin/img/polos.png') }}" alt="Logo BANSOS" width="180" height="100"
+                style="background-color: #fffafa; border-radius: 8px; padding: 10px;">
         </a>
 
         <div class="d-flex align-items-center ms-4 mb-4">

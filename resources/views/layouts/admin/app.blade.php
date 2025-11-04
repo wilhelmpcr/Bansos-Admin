@@ -24,6 +24,9 @@
     {{-- Content Wrapper --}}
     <div class="content">
 
+        {{-- Navbar --}}
+        @include('layouts.admin.navbar')
+
         {{-- Main Content --}}
         @yield('content')
 
