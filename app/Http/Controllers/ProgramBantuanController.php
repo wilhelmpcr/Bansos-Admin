@@ -13,7 +13,7 @@ class ProgramBantuanController extends Controller
     public function index()
     {
         $programs = ProgramBantuan::all();
-        return view('admin.program_bantuan.index', compact('programs'));
+        return view('pages.admin.program_bantuan.index', compact('programs'));
     }
 
     /**
@@ -21,7 +21,7 @@ class ProgramBantuanController extends Controller
      */
     public function create()
     {
-        return view('admin.program_bantuan.create');
+        return view('pages.program_bantuan.create');
 
     }
 
@@ -58,7 +58,7 @@ class ProgramBantuanController extends Controller
     public function edit(string $id)
     {
          $program = ProgramBantuan::findOrFail($id);
-        return view('admin.program_bantuan.edit', compact('program'));
+        return view('pages.program_bantuan.edit', compact('program'));
     }
 
     /**

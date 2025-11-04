@@ -31,7 +31,7 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->name('dashboard');
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('pages.auth.dashboard');
 
 Route::resource('warga', WargaController::class);
 

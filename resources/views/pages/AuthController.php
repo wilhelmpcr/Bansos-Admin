@@ -11,7 +11,7 @@ class AuthController extends Controller
     // Tampilkan form login
     public function showlogin()
     {
-        return view('pages.auth.login-form');
+        return view('auth.login-form');
     }
 
     // Proses login
@@ -33,7 +33,7 @@ class AuthController extends Controller
 
         if ($user && Hash::check($request->password, $user->password)) {
             // Jika cocok, arahkan ke halaman sukses
-            return redirect()->route('pages.auth.dashboard')->with('username', $user->name);
+            return redirect()->route('admin.dashboard')->with('username', $user->name);
         }
 
         return back()->with('error', 'Username atau password salah.');
@@ -44,16 +44,16 @@ class AuthController extends Controller
     {
         $username = session('username');
         if (! $username) {
-            return redirect()->route('login-form')->with('error', 'Silakan login terlebih dahulu.');
+            return redirect()->route('login.form')->with('error', 'Silakan login terlebih dahulu.');
         }
-        return view('pages.auth.login-success', compact('username'));
+        return view('auth.login-success', compact('username'));
         return redirect()->route('login.success')->with('username', $user->name);
     }
 
     // Tampilkan form register
     public function showRegister()
     {
-        return view('pages.auth.register-form');
+        return view('auth.register-form');
     }
 
     // Proses register
@@ -89,7 +89,7 @@ class AuthController extends Controller
     public function registerSuccess()
     {
         $username = session('username');
-        return view('pages.auth.register-success', compact('username'));
+        return view('auth.register-success', compact('username'));
     }
     public function logout(Request $request)
     {

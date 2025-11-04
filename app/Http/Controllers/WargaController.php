@@ -11,13 +11,13 @@ class WargaController extends Controller
     public function index()
     {
         $data['dataWarga'] = Warga::all();
-        return view('admin.warga.index', $data);
+        return view('pages.warga.index', $data);
     }
 
     // FORM TAMBAH
     public function create()
     {
-        return view('admin.warga.create');
+        return view('pages.warga.create');
     }
 
     // SIMPAN DATA BARU
@@ -41,7 +41,7 @@ class WargaController extends Controller
     public function edit($id)
     {
         $warga = Warga::findOrFail($id); // Ambil data berdasarkan ID
-        return view('admin.warga.edit', compact('warga'));
+        return view('pages.warga.edit', compact('warga'));
     }
 
     // UPDATE DATA

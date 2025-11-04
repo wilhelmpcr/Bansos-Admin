@@ -15,7 +15,7 @@ class PenerimaBantuanController extends Controller
     public function index()
     {
         $data['dataPenerima'] = PenerimaBantuan::with(['program', 'warga'])->get();
-return view('admin.penerima_bantuan.index', $data);
+return view('pages.admin.penerima_bantuan.index', $data);
     }
 
     /**
@@ -25,7 +25,7 @@ return view('admin.penerima_bantuan.index', $data);
     {
         $data['warga'] = Warga::all();
         $data['program'] = ProgramBantuan::all();
-        return view('admin.penerima_bantuan.create', $data);
+        return view('pages.admin.penerima_bantuan.create', $data);
     }
 
     /**
@@ -59,7 +59,7 @@ return view('admin.penerima_bantuan.index', $data);
         $data['penerima'] = PenerimaBantuan::findOrFail($id);
         $data['warga'] = Warga::all();
         $data['program'] = ProgramBantuan::all();
-        return view('admin.penerima.edit', $data);
+        return view('pages.admin.penerima.edit', $data);
     }
 
     /**
