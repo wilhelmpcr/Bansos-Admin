@@ -12,8 +12,9 @@ class ProgramBantuanController extends Controller
      */
     public function index()
     {
+        // Ambil semua program dan kirim sebagai $programs ke view
         $programs = ProgramBantuan::all();
-        return view('pages.admin.program_bantuan.index', compact('programs'));
+        return view('pages.program_bantuan.index', compact('programs'));
     }
 
     /**
@@ -22,7 +23,6 @@ class ProgramBantuanController extends Controller
     public function create()
     {
         return view('pages.program_bantuan.create');
-
     }
 
     /**
@@ -30,7 +30,7 @@ class ProgramBantuanController extends Controller
      */
     public function store(Request $request)
     {
-          $validated = $request->validate([
+        $validated = $request->validate([
             'kode' => 'required|unique:program_bantuan,kode|max:50',
             'nama_program' => 'required|string|max:255',
             'tahun' => 'required|digits:4|integer',
@@ -49,7 +49,7 @@ class ProgramBantuanController extends Controller
      */
     public function show(string $id)
     {
-        //
+        // Optional: implement jika butuh menampilkan detail
     }
 
     /**
@@ -57,7 +57,7 @@ class ProgramBantuanController extends Controller
      */
     public function edit(string $id)
     {
-         $program = ProgramBantuan::findOrFail($id);
+        $program = ProgramBantuan::findOrFail($id);
         return view('pages.program_bantuan.edit', compact('program'));
     }
 
@@ -66,7 +66,7 @@ class ProgramBantuanController extends Controller
      */
     public function update(Request $request, string $id)
     {
-                $program = ProgramBantuan::findOrFail($id);
+        $program = ProgramBantuan::findOrFail($id);
 
         $validated = $request->validate([
             'kode' => 'required|max:50|unique:program_bantuan,kode,' . $program->program_id . ',program_id',
@@ -81,8 +81,6 @@ class ProgramBantuanController extends Controller
         return redirect()->route('program_bantuan.index')
                          ->with('success', 'Program Bantuan berhasil diperbarui!');
     }
-
-
 
     /**
      * Remove the specified resource from storage.

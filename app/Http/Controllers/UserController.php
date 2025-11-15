@@ -51,7 +51,7 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = User::findOrFail($id);
-        return view('pages.user.edit', compact('user'));
+        return view('pages.user.edit', compact('users'));
     }
 
     /**
@@ -89,6 +89,6 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         $user->delete();
 
-        return redirect()->route('pages.user.index')->with('success', 'User berhasil dihapus!');
+        return redirect()->route('user.index')->with('success', 'Data user berhasil dihapus');
     }
 }

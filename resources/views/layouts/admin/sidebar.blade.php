@@ -33,6 +33,11 @@
                 <i class="fa fa-gift"></i>Bantuan
             </a>
 
+            </a>
+            <a href="{{ url('/pendaftar_bantuan') }}" class="nav-item nav-link active">
+                <i class="fa fa-gift"></i>Pendaftar
+            </a>
+
             <hr class="dropdown-divider">
             <a href="{{ route('login.form') }}" class="nav-item nav-link active">
                 <i class="fa fa-sign-in-alt me-2"></i> Login

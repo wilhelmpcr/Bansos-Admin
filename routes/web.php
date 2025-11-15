@@ -7,9 +7,11 @@ use App\Http\Controllers\WargaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProgramBantuanController;
 use App\Http\Controllers\PenerimaBantuanController;
+use App\Http\Controllers\PendaftarBantuanController;
+
 
 Route::get('/', function () {
-    return view('welcome'); // atau ganti dengan view lain
+    return view ('pages.dashboard'); // atau ganti dengan view lain
 });
 
 
@@ -40,6 +42,12 @@ Route::resource('penerima_bantuan', PenerimaBantuanController::class);
 Route::resource('program_bantuan', ProgramBantuanController::class);
 
 Route::resource('user', UserController::class);
+
+
+Route::resource('pendaftar_bantuan', PendaftarBantuanController::class);
+
+
+
 
 
 
