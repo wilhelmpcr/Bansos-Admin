@@ -24,6 +24,17 @@
                     @error('email') <small class="text-danger">{{ $message }}</small> @enderror
                 </div>
 
+                {{-- JENIS KELAMIN --}}
+                <div class="mb-3">
+                    <label for="gender" class="form-label">Jenis Kelamin</label>
+                    <select id="gender" name="gender" class="form-select" required>
+                        <option value="">-- Pilih Jenis Kelamin --</option>
+                        <option value="male"   {{ $user->gender == 'male' ? 'selected' : '' }}>Laki-laki</option>
+                        <option value="female" {{ $user->gender == 'female' ? 'selected' : '' }}>Perempuan</option>
+                    </select>
+                    @error('gender') <small class="text-danger">{{ $message }}</small> @enderror
+                </div>
+
                 <div class="mb-3">
                     <label for="password" class="form-label">Password Baru (Opsional)</label>
                     <input type="password" id="password" name="password" class="form-control">
@@ -42,7 +53,7 @@
             </form>
         </div>
     </div>
-</div>
+</div>  
 
 </body>
 @endsection

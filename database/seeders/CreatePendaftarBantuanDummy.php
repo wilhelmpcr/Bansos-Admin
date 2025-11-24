@@ -24,7 +24,7 @@ class CreatePendaftarBantuanDummy extends Seeder
 
         $statuses = ['pending', 'diterima', 'ditolak'];
 
-        // Buat 100 data pendaftar dummy
+        // Buat setidaknya 100 data pendaftar dummy
         foreach (range(1, 100) as $index) {
             DB::table('pendaftar_bantuan')->insert([
                 'warga_id'       => $faker->randomElement($wargaIds),
@@ -35,6 +35,6 @@ class CreatePendaftarBantuanDummy extends Seeder
             ]);
         }
 
-        $this->command->info('Data pendaftar_bantuan dummy berhasil dibuat!');
+        $this->command->info('Data pendaftar_bantuan dummy (100 baris) berhasil dibuat!');
     }
 }

@@ -34,6 +34,16 @@
                     <input type="password" id="password_confirmation" name="password_confirmation" class="form-control" required>
                 </div>
 
+                <div class="mb-3">
+    <label for="gender" class="form-label">Jenis Kelamin</label>
+    <select id="gender" name="gender" class="form-select" required>
+        <option value="">-- Pilih Jenis Kelamin --</option>
+        <option value="male" >Laki-laki</option>
+        <option value="female">Perempuan</option>
+    </select>
+    @error('gender') <small class="text-danger">{{ $message }}</small> @enderror
+</div>
+
                 <div class="text-end">
                     <button type="submit" class="btn btn-success">Simpan</button>
                     <a href="{{ route('user.index') }}" class="btn btn-secondary">Batal</a>

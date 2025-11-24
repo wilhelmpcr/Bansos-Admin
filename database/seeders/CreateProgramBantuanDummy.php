@@ -23,7 +23,17 @@ class CreateProgramBantuanDummy extends Seeder
             'Bantuan Beasiswa Mahasiswa',
         ];
 
-        foreach (range(1, 20) as $index) {
+        // MATIKAN FOREIGN KEY CHECKS DULU (kalau ada relasi)
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
+
+        // Kosongkan tabel tanpa error foreign key
+        DB::table('program_bantuan')->truncate();
+
+        // HIDUPKAN LAGI FOREIGN KEY CHECKS
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
+
+        // Insert ulang 100 data
+        foreach (range(1, 100) as $index) {
             $namaProgram = $faker->randomElement($namaProgramList);
 
             DB::table('program_bantuan')->insert([
@@ -37,6 +47,6 @@ class CreateProgramBantuanDummy extends Seeder
             ]);
         }
 
-        $this->command->info('Data program_bantuan dummy berhasil dibuat!');
+        $this->command->info('Data program_bantuan dummy (100 baris) berhasil dibuat ulang!');
     }
 }

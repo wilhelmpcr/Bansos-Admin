@@ -1,22 +1,32 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
     /**
-     * Tampilkan semua data user.
+     * Tampilkan semua data user (dengan pagination + filter).
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::all();
+        // Kolom untuk pencarian teks
+        $searchableColumns = ['name', 'email'];
+
+        $users = User::query()
+            ->search($request, $searchableColumns);
+
+        // Filter email domain (gmail saja)
+        if ($request->email_domain == 'gmail') {
+            $users->where('email', 'like', '%@gmail.com');
+        }
+
+        $users = $users->paginate(10)->withQueryString();
+
         return view('pages.user.index', compact('users'));
     }
-
     /**
      * Tampilkan form tambah user.
      */
@@ -31,18 +41,20 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6|confirmed',
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|email|unique:users,email', // ⬅️ TIDAK pakai $id di sini
+            'gender'   => 'required|in:male,female',
+            'password' => 'required|string|min:6|confirmed', // ⬅️ wajib isi password saat create
         ]);
 
         User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password), // 🔒 password di-hash
+            'name'     => $request->name,
+            'email'    => $request->email,
+            'gender'   => $request->gender,
+            'password' => Hash::make($request->password),
         ]);
 
-        return redirect()->route('pages.user.index')->with('success', 'User berhasil ditambahkan!');
+        return redirect()->route('user.index')->with('success', 'User berhasil ditambahkan!');
     }
 
     /**
@@ -51,7 +63,8 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = User::findOrFail($id);
-        return view('pages.user.edit', compact('users'));
+
+        return view('pages.user.edit', compact('user'));
     }
 
     /**
@@ -62,23 +75,25 @@ class UserController extends Controller
         $user = User::findOrFail($id);
 
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $id,
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|email|unique:users,email,' . $id,
+            'gender'   => 'required|in:male,female',
             'password' => 'nullable|string|min:6|confirmed',
         ]);
 
         $data = [
-            'name' => $request->name,
-            'email' => $request->email,
+            'name'   => $request->name,
+            'email'  => $request->email,
+            'gender' => $request->gender,
         ];
 
         if ($request->filled('password')) {
-            $data['password'] = Hash::make($request->password); // 🔒 hash hanya jika password baru diisi
+            $data['password'] = Hash::make($request->password);
         }
 
         $user->update($data);
 
-        return redirect()->route('pages.user.index')->with('success', 'User berhasil diperbarui!');
+        return redirect()->route('user.index')->with('success', 'User berhasil diperbarui!');
     }
 
     /**
