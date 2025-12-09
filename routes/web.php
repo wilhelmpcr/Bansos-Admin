@@ -1,53 +1,75 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MediaController;
+use App\Http\Controllers\PendaftarBantuanController;
+use App\Http\Controllers\ProgramBantuanController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WargaController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ProgramBantuanController;
-use App\Http\Controllers\PenerimaBantuanController;
-use App\Http\Controllers\PendaftarBantuanController;
+use App\Http\Controllers\PeristiwaKelahiranController;
+use Illuminate\Support\Facades\Route;
 
+/*
+|--------------------------------------------------------------------------
+| AUTH
+|--------------------------------------------------------------------------
+*/
 
-Route::get('/', function () {
-    return view ('pages.dashboard'); // atau ganti dengan view lain
-});
-
-
-// Login
-Route::get('/login', [AuthController::class, 'showLogin'])->name('login.form');
+// Halaman login
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.process');
-Route::get('/login-success', [AuthController::class, 'loginSuccess'])->name('login.success');
 
-//logout
+// Logout
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Register
+// Halaman register
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register.form');
 Route::post('/register', [AuthController::class, 'register'])->name('register.process');
-Route::get('/register-success', [AuthController::class, 'registerSuccess'])->name('register.success');
 
-// Dashboard
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->name('dashboard');
+/*
+|--------------------------------------------------------------------------
+| DASHBOARD PROTECTED
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth'])->group(function () {
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('pages.auth.dashboard');
+    // Dashboard umum
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->name('dashboard');
 
-Route::resource('warga', WargaController::class);
+    // Dashboard user
+    Route::get('/user/dashboard', [DashboardController::class, 'index'])
+        ->name('user.dashboard');
 
-Route::resource('penerima_bantuan', PenerimaBantuanController::class);
+    // Dashboard admin (hanya role admin)
+    Route::middleware(['role:admin'])->group(function () {
+        Route::get('/admin/dashboard', [DashboardController::class, 'index'])
+            ->name('admin.dashboard');
+    });
 
-Route::resource('program_bantuan', ProgramBantuanController::class);
+    // Resource routes
+    Route::resource('warga', WargaController::class);
+    Route::resource('program_bantuan', ProgramBantuanController::class);
+    Route::resource('user', UserController::class);
+    Route::resource('pendaftar_bantuan', PendaftarBantuanController::class);
 
-Route::resource('user', UserController::class);
+    // MEDIA FILE ROUTES
+    Route::get('warga/{id}/media', [MediaController::class, 'index'])->name('media.index');
+    Route::get('warga/{id}/media/upload', [MediaController::class, 'create'])->name('media.create');
+    Route::post('warga/{id}/media', [MediaController::class, 'store'])->name('media.store');
+    Route::delete('warga/{id}/media/{media_id}', [MediaController::class, 'destroy'])->name('media.destroy');
 
+    // PERISTIWA KELAHIRAN
+    Route::resource('kelahiran', PeristiwaKelahiranController::class)->names('kelahiran');
+});
 
-Route::resource('pendaftar_bantuan', PendaftarBantuanController::class);
-
-
-
-
-
-
+/*
+|--------------------------------------------------------------------------
+| ROOT
+|--------------------------------------------------------------------------
+*/
+// Jika user belum login, diarahkan ke halaman login
+Route::get('/', function () {
+    return redirect()->route('login');
+});

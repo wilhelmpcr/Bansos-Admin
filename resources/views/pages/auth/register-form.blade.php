@@ -151,7 +151,7 @@
                     <button class="btn btn-success w-100 py-2">Daftar</button>
 
                     <div class="mt-4 text-center">
-                        Sudah punya akun? <a href="{{ route('login.form') }}">Login</a>
+                        Sudah punya akun? <a href="{{ route('login') }}">Login</a>
                     </div>
                 </form>
             </div>

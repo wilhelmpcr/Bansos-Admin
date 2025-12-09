@@ -4,8 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;   // ⬅️ PENTING: pakai yang ini
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use App\Models\PeristiwaKelahiran;
 
 class Warga extends Model
 {
@@ -24,7 +25,7 @@ class Warga extends Model
         'email',
     ];
 
-    // 🔹 FILTER (untuk dropdown jenis_kelamin, agama, pekerjaan)
+    // FILTER
     public function scopeFilter(Builder $query, Request $request, array $filterableColumns): Builder
     {
         foreach ($filterableColumns as $column) {
@@ -36,7 +37,7 @@ class Warga extends Model
         return $query;
     }
 
-    // 🔹 SEARCH (untuk input text search)
+    // SEARCH
     public function scopeSearch(Builder $query, Request $request, array $columns): Builder
     {
         if ($request->filled('search')) {
@@ -50,5 +51,22 @@ class Warga extends Model
         }
 
         return $query;
+    }
+
+    // ──────────────── RELASI BALIK KELAHIRAN ────────────────
+
+    public function kelahiranSebagaiAnak()
+    {
+        return $this->hasOne(PeristiwaKelahiran::class, 'warga_id', 'warga_id');
+    }
+
+    public function kelahiranSebagaiAyah()
+    {
+        return $this->hasMany(PeristiwaKelahiran::class, 'ayah_warga_id', 'warga_id');
+    }
+
+    public function kelahiranSebagaiIbu()
+    {
+        return $this->hasMany(PeristiwaKelahiran::class, 'ibu_warga_id', 'warga_id');
     }
 }

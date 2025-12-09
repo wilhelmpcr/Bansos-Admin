@@ -22,9 +22,18 @@
             <!-- Dropdown Filter Email -->
             <div class="col-md-3 col-lg-2">
                 <select name="email_domain" class="form-select" onchange="this.form.submit()">
-                    <option value="">All</option>
+                    <option value="">All Domains</option>
                     <option value="gmail" {{ request('email_domain') == 'gmail' ? 'selected' : '' }}>Gmail</option>
                     <option value="example" {{ request('email_domain') == 'example' ? 'selected' : '' }}>example.com</option>
+                </select>
+            </div>
+
+            <!-- Dropdown Filter Role -->
+            <div class="col-md-3 col-lg-2">
+                <select name="role" class="form-select" onchange="this.form.submit()">
+                    <option value="">All Roles</option>
+                    <option value="user" {{ request('role')=='user' ? 'selected' : '' }}>User</option>
+                    <option value="admin" {{ request('role')=='admin' ? 'selected' : '' }}>Admin</option>
                 </select>
             </div>
 
@@ -55,6 +64,7 @@
                             <th>No</th>
                             <th>Nama</th>
                             <th>Email</th>
+                            <th>Role</th>
                             <th>Password (Hashed)</th>
                             <th>Aksi</th>
                         </tr>
@@ -65,24 +75,22 @@
                                 <td class="text-center">{{ $users->firstItem() + $index }}</td>
                                 <td>{{ $user->name }}</td>
                                 <td>{{ $user->email }}</td>
+                                <td class="text-center">{{ ucfirst($user->role) }}</td>
                                 <td class="text-muted">{{ Str::limit($user->password, 20, '...') }}</td>
                                 <td class="text-center">
                                     <a href="{{ route('user.edit', $user->id) }}" class="btn btn-warning btn-sm">
                                         Edit
                                     </a>
-                                    <form action="{{ route('user.destroy', $user->id) }}" method="POST" class="d-inline">
+                                    <form action="{{ route('user.destroy', $user->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus user ini?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm"
-                                            onclick="return confirm('Yakin ingin menghapus user ini?')">
-                                            Hapus
-                                        </button>
+                                        <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
                                     </form>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="text-center text-muted">Belum ada data user</td>
+                                <td colspan="6" class="text-center text-muted">Belum ada data user</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -103,4 +111,3 @@
 
 </body>
 @endsection
- 
