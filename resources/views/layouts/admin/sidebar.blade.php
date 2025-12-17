@@ -9,7 +9,9 @@
             <div class="position-relative">
                 <img class="rounded-circle" src="{{ asset('assets-admin/img/user.jpg') }}" alt=""
                     style="width: 40px; height: 40px;">
-                <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
+                <div
+                    class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1">
+                </div>
             </div>
             <div class="ms-3">
                 <h6 class="mb-0">{{ Auth::user()->name ?? 'Guest' }}</h6>
@@ -20,42 +22,37 @@
         <div class="navbar-nav w-100">
             {{-- MENU HANYA UNTUK USER LOGIN --}}
             @auth
-                <a href="{{ url('/dashboard') }}" class="nav-item nav-link">
+                <a href="{{ route('dashboard') }}" class="nav-item nav-link">
                     <i class="fa fa-tachometer-alt me-2"></i> Dashboard
                 </a>
 
-                <a href="{{ url('/warga') }}" class="nav-item nav-link">
-                    <i class="fa fa-user"></i> Warga
+                <a href="{{ route('warga.index') }}" class="nav-item nav-link">
+                    <i class="fa fa-user me-2"></i> Warga
                 </a>
 
-                <a href="{{ url('/kelahiran') }}" class="nav-item nav-link">
-                    <i class="fa fa-baby me-2"></i> Kelahiran
+                <a href="{{ route('riwayat_penyaluran.index') }}" class="nav-item nav-link">
+                    <i class="fa fa-history me-2"></i> Riwayat
                 </a>
 
-                <a href="{{ url('/user') }}" class="nav-item nav-link">
-                    <i class="fa fa-user"></i> User
+                <a href="{{ route('user.index') }}" class="nav-item nav-link">
+                    <i class="fa fa-user me-2"></i> User
                 </a>
 
-                <a href="{{ url('/program_bantuan') }}" class="nav-item nav-link">
-                    <i class="fa fa-gift"></i> Bantuan
+                <a href="{{ route('program_bantuan.index') }}" class="nav-item nav-link">
+                    <i class="fa fa-gift me-2"></i> Bantuan
                 </a>
 
-                <a href="{{ url('/pendaftar_bantuan') }}" class="nav-item nav-link">
-                    <i class="fa fa-gift"></i> Pendaftar
+                <a href="{{ route('pendaftar_bantuan.index') }}" class="nav-item nav-link">
+                    <i class="fa fa-gift me-2"></i> Pendaftar
+                </a>
+
+                <a href="{{ route('verifikasi_lapangan.index') }}" class="nav-item nav-link">
+                    <i class="fa fa-clipboard-check me-2"></i> Verifikasi Lapangan
                 </a>
 
                 <hr class="dropdown-divider">
 
-                {{-- LOGOUT FORM (BENAR & TIDAK 419) --}}
-                <form action="{{ route('logout') }}" method="POST" class="nav-item nav-link p-0 m-0">
-                    @csrf
-                    <button type="submit" class="btn w-100 text-start">
-                        <i class="fa fa-sign-out-alt me-2"></i> Logout
-                    </button>
-                </form>
             @endauth
-
-
 
             {{-- MENU UNTUK TAMU (BELUM LOGIN) --}}
             @guest

@@ -1,10 +1,9 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\PendaftarBantuan;
-use App\Models\Warga;
 use App\Models\ProgramBantuan;
+use App\Models\Warga;
 use Illuminate\Http\Request;
 
 class PendaftarBantuanController extends Controller
@@ -20,8 +19,8 @@ class PendaftarBantuanController extends Controller
         $searchableColumns = ['status_seleksi'];
 
         $pendaftar = PendaftarBantuan::with(['warga', 'program'])
-            ->filter($request, $filterableColumns)      // scopeFilter di model
-            ->search($request, $searchableColumns)      // scopeSearch di model
+            ->filter($request, $filterableColumns) // scopeFilter di model
+            ->search($request, $searchableColumns) // scopeSearch di model
             ->paginate(10)
             ->withQueryString();
 
@@ -30,7 +29,7 @@ class PendaftarBantuanController extends Controller
 
     public function create()
     {
-        $warga = Warga::all();
+        $warga   = Warga::all();
         $program = ProgramBantuan::all();
         return view('pages.pendaftar_bantuan.create', compact('warga', 'program'));
     }
@@ -50,12 +49,12 @@ class PendaftarBantuanController extends Controller
         ]);
 
         return redirect()->route('pendaftar_bantuan.index')
-                         ->with('success', 'Pendaftar berhasil ditambahkan');
+            ->with('success', 'Pendaftar berhasil ditambahkan');
     }
 
     public function edit(PendaftarBantuan $pendaftar_bantuan)
     {
-        $warga = Warga::all();
+        $warga   = Warga::all();
         $program = ProgramBantuan::all();
         return view('pages.pendaftar_bantuan.edit', compact('pendaftar_bantuan', 'warga', 'program'));
     }
@@ -68,10 +67,10 @@ class PendaftarBantuanController extends Controller
             'status_seleksi' => 'required|in:pending,diterima,ditolak',
         ]);
 
-        $pendaftar_bantuan->update($request->only('warga_id','program_id','status_seleksi'));
+        $pendaftar_bantuan->update($request->only('warga_id', 'program_id', 'status_seleksi'));
 
         return redirect()->route('pendaftar_bantuan.index')
-                         ->with('success', 'Pendaftar berhasil diupdate');
+            ->with('success', 'Pendaftar berhasil diupdate');
     }
 
     public function destroy(PendaftarBantuan $pendaftar_bantuan)
@@ -79,6 +78,15 @@ class PendaftarBantuanController extends Controller
         $pendaftar_bantuan->delete();
 
         return redirect()->route('pendaftar_bantuan.index')
-                         ->with('success', 'Pendaftar berhasil dihapus');
+            ->with('success', 'Pendaftar berhasil dihapus');
     }
+
+    public function show(PendaftarBantuan $pendaftar_bantuan)
+    {
+        // load relasi biar tidak N+1
+        $pendaftar_bantuan->load(['warga', 'program']);
+
+        return view('pages.pendaftar_bantuan.show', compact('pendaftar_bantuan'));
+    }
+
 }

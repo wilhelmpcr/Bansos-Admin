@@ -97,4 +97,10 @@ class UserController extends Controller
 
         return redirect()->route('user.index')->with('success', 'Data user berhasil dihapus');
     }
+        public function show($id)
+    {
+        $user = User::findOrFail($id);
+        return view('pages.user.show', compact('user'));
+    }
+
 }

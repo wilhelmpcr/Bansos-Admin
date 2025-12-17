@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Warga;
@@ -17,8 +16,8 @@ class WargaController extends Controller
         $searchableColumns = ['no_ktp', 'nama', 'pekerjaan', 'email'];
 
         $data['dataWarga'] = Warga::query()
-            ->filter($request, $filterableColumns)   // scopeFilter di model Warga
-            ->search($request, $searchableColumns)   // scopeSearch di model Warga
+            ->filter($request, $filterableColumns) // scopeFilter di model Warga
+            ->search($request, $searchableColumns) // scopeSearch di model Warga
             ->paginate(10)
             ->withQueryString();
 
@@ -84,4 +83,13 @@ class WargaController extends Controller
 
         return redirect()->route('warga.index')->with('success', 'Data warga berhasil dihapus');
     }
+
+    // DETAIL DATA
+    public function show($id)
+    {
+        $warga = Warga::findOrFail($id);
+
+        return view('pages.warga.show', compact('warga'));
+    }
+
 }

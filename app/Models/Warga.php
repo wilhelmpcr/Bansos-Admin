@@ -52,21 +52,4 @@ class Warga extends Model
 
         return $query;
     }
-
-    // ──────────────── RELASI BALIK KELAHIRAN ────────────────
-
-    public function kelahiranSebagaiAnak()
-    {
-        return $this->hasOne(PeristiwaKelahiran::class, 'warga_id', 'warga_id');
-    }
-
-    public function kelahiranSebagaiAyah()
-    {
-        return $this->hasMany(PeristiwaKelahiran::class, 'ayah_warga_id', 'warga_id');
-    }
-
-    public function kelahiranSebagaiIbu()
-    {
-        return $this->hasMany(PeristiwaKelahiran::class, 'ibu_warga_id', 'warga_id');
-    }
 }

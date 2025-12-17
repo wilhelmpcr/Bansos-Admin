@@ -1,56 +1,103 @@
 @extends('layouts.admin.app')
 
 @section('content')
-<body class="bg-light">
 <div class="container mt-5">
     <h2 class="text-center mb-4">Tambah Data Warga</h2>
 
-    <form action="{{ route('warga.store') }}" method="POST" class="card p-4 shadow-sm bg-white">
-        @csrf
-        <div class="mb-3">
-            <label>No KTP</label>
-            <input type="text" name="no_ktp" class="form-control" required maxlength="16">
-        </div>
+    <div class="card shadow-sm">
+        <div class="card-body">
 
-        <div class="mb-3">
-            <label>Nama</label>
-            <input type="text" name="nama" class="form-control" required>
-        </div>
+            {{-- Tampilkan error validasi --}}
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
-        <div class="mb-3">
-            <label>Jenis Kelamin</label>
-            <select name="jenis_kelamin" class="form-select" required>
-                <option value="">-- Pilih --</option>
-                <option value="L">Laki-Laki</option>
-                <option value="P">Perempuan</option>
-            </select>
-        </div>
+            <form action="{{ route('warga.store') }}" method="POST">
+                @csrf
 
-        <div class="mb-3">
-            <label>Agama</label>
-            <input type="text" name="agama" class="form-control" required>
-        </div>
+                <div class="mb-3">
+                    <label class="form-label">No KTP</label>
+                    <input type="text"
+                           name="no_ktp"
+                           class="form-control"
+                           value="{{ old('no_ktp') }}"
+                           required
+                           maxlength="16">
+                </div>
 
-        <div class="mb-3">
-            <label>Pekerjaan</label>
-            <input type="text" name="pekerjaan" class="form-control" required>
-        </div>
+                <div class="mb-3">
+                    <label class="form-label">Nama</label>
+                    <input type="text"
+                           name="nama"
+                           class="form-control"
+                           value="{{ old('nama') }}"
+                           required>
+                </div>
 
-        <div class="mb-3">
-            <label>Telp</label>
-            <input type="text" name="telp" class="form-control">
-        </div>
+                <div class="mb-3">
+                    <label class="form-label">Jenis Kelamin</label>
+                    <select name="jenis_kelamin" class="form-select" required>
+                        <option value="">-- Pilih --</option>
+                        <option value="L" {{ old('jenis_kelamin') == 'L' ? 'selected' : '' }}>
+                            Laki-Laki
+                        </option>
+                        <option value="P" {{ old('jenis_kelamin') == 'P' ? 'selected' : '' }}>
+                            Perempuan
+                        </option>
+                    </select>
+                </div>
 
-        <div class="mb-3">
-            <label>Email</label>
-            <input type="email" name="email" class="form-control">
-        </div>
+                <div class="mb-3">
+                    <label class="form-label">Agama</label>
+                    <input type="text"
+                           name="agama"
+                           class="form-control"
+                           value="{{ old('agama') }}"
+                           required>
+                </div>
 
-        <div class="text-end">
-            <a href="{{ route('warga.index') }}" class="btn btn-secondary">Batal</a>
-            <button type="submit" class="btn btn-primary">Simpan</button>
+                <div class="mb-3">
+                    <label class="form-label">Pekerjaan</label>
+                    <input type="text"
+                           name="pekerjaan"
+                           class="form-control"
+                           value="{{ old('pekerjaan') }}"
+                           required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Telp</label>
+                    <input type="text"
+                           name="telp"
+                           class="form-control"
+                           value="{{ old('telp') }}">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email"
+                           name="email"
+                           class="form-control"
+                           value="{{ old('email') }}">
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="{{ route('warga.index') }}" class="btn btn-secondary">
+                        Batal
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        Simpan
+                    </button>
+                </div>
+
+            </form>
         </div>
-    </form>
+    </div>
 </div>
-</body>
 @endsection

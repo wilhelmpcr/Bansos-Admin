@@ -9,77 +9,109 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('guest')->except('logout');
-    }
-
-    // Tampilkan halaman login
+    /*
+    |--------------------------------------------------------------------------
+    | LOGIN VIEW
+    |--------------------------------------------------------------------------
+    */
     public function showLogin()
     {
+        if (Auth::check()) {
+            return redirect()->route('dashboard');
+        }
+
         return view('pages.auth.login-form');
     }
 
-    // Proses login
+    /*
+    |--------------------------------------------------------------------------
+    | LOGIN PROCESS
+    |--------------------------------------------------------------------------
+    */
     public function login(Request $request)
     {
         $request->validate([
             'username' => 'required|string',
-            'password' => ['required', 'min:3', 'regex:/[A-Z]/'],
+            'password' => 'required|string',
         ]);
 
-        if (Auth::attempt(['name' => $request->username, 'password' => $request->password])) {
-            $request->session()->regenerate();
-            $user = Auth::user();
+        $credentials = [
+            'name'     => $request->username,
+            'password' => $request->password,
+        ];
 
-            return match ($user->role) {
-                'admin'  => redirect()->route('admin.dashboard')
-                                ->with('success', 'Selamat datang Admin '.$user->name),
-                default  => redirect()->route('user.dashboard')
-                                ->with('success', 'Selamat datang '.$user->name),
-            };
+        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+            $request->session()->regenerate();
+
+            return redirect()->route('dashboard')
+                ->with('success', 'Selamat datang, ' . Auth::user()->name);
         }
 
-        return back()->with('error','Username atau password salah.');
+        return back()
+            ->withInput()
+            ->with('error', 'Username atau password salah.');
     }
 
-    // Tampilkan halaman register
+    /*
+    |--------------------------------------------------------------------------
+    | REGISTER VIEW
+    |--------------------------------------------------------------------------
+    */
     public function showRegister()
     {
+        if (Auth::check()) {
+            return redirect()->route('dashboard');
+        }
+
         return view('pages.auth.register-form');
     }
 
-    // Proses register
+    /*
+    |--------------------------------------------------------------------------
+    | REGISTER PROCESS
+    |--------------------------------------------------------------------------
+    */
     public function register(Request $request)
     {
         $request->validate([
             'username' => 'required|string|unique:users,name',
             'email'    => 'required|email|unique:users,email',
-            'password' => ['required', 'min:3', 'regex:/[A-Z]/'],
+            'password' => [
+                'required',
+                'min:6',
+                'regex:/[A-Z]/'
+            ],
         ]);
 
         $user = User::create([
             'name'     => $request->username,
             'email'    => $request->email,
             'password' => Hash::make($request->password),
-            'role'     => 'user',
+            'role'     => 'user', // default user
         ]);
 
         Auth::login($user);
         $request->session()->regenerate();
 
-        return redirect()->route('user.dashboard')
-                         ->with('success', 'Selamat datang '.$user->name);
+        return redirect()->route('dashboard')
+            ->with('success', 'Akun berhasil dibuat. Selamat datang ' . $user->name);
     }
 
-    // Logout user
+    /*
+    |--------------------------------------------------------------------------
+    | LOGOUT
+    |--------------------------------------------------------------------------
+    */
     public function logout(Request $request)
     {
+        $name = Auth::user()->name ?? 'User';
+
         Auth::logout();
+
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
         return redirect()->route('login')
-                         ->with('success', 'Logout berhasil.');
+            ->with('success', 'Logout berhasil. Sampai jumpa, ' . $name . '!');
     }
 }

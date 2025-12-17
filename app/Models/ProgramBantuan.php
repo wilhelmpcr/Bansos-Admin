@@ -1,17 +1,16 @@
 <?php
-
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class ProgramBantuan extends Model
 {
     use HasFactory;
 
-    protected $table = 'program_bantuan';
+    protected $table      = 'program_bantuan';
     protected $primaryKey = 'program_id';
 
     protected $fillable = [
@@ -49,4 +48,11 @@ class ProgramBantuan extends Model
 
         return $query;
     }
+    public function show($id)
+    {
+        $program = ProgramBantuan::findOrFail($id);
+
+        return view('pages.program_bantuan.show', compact('program'));
+    }
+
 }
