@@ -10,17 +10,12 @@ class PendaftarBantuanController extends Controller
 {
     public function index(Request $request)
     {
-        // kolom yang boleh difilter (dropdown)
         $filterableColumns = ['status_seleksi'];
-
-        // kolom yang boleh di-search di tabel pendaftar_bantuan
-        // kalau mau fokusnya di relasi (nama warga & nama program),
-        // boleh juga dikosongin: []
         $searchableColumns = ['status_seleksi'];
 
         $pendaftar = PendaftarBantuan::with(['warga', 'program'])
-            ->filter($request, $filterableColumns) // scopeFilter di model
-            ->search($request, $searchableColumns) // scopeSearch di model
+            ->filter($request, $filterableColumns)
+            ->search($request, $searchableColumns)
             ->paginate(10)
             ->withQueryString();
 
@@ -36,17 +31,13 @@ class PendaftarBantuanController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $request->validate([~
             'warga_id'       => 'required|exists:warga,warga_id',
             'program_id'     => 'required|exists:program_bantuan,program_id',
             'status_seleksi' => 'required|in:pending,diterima,ditolak',
         ]);
 
-        PendaftarBantuan::create([
-            'warga_id'       => $request->warga_id,
-            'program_id'     => $request->program_id,
-            'status_seleksi' => $request->status_seleksi,
-        ]);
+        PendaftarBantuan::create($request->only('warga_id', 'program_id', 'status_seleksi'));
 
         return redirect()->route('pendaftar_bantuan.index')
             ->with('success', 'Pendaftar berhasil ditambahkan');
@@ -83,10 +74,8 @@ class PendaftarBantuanController extends Controller
 
     public function show(PendaftarBantuan $pendaftar_bantuan)
     {
-        // load relasi biar tidak N+1
         $pendaftar_bantuan->load(['warga', 'program']);
 
         return view('pages.pendaftar_bantuan.show', compact('pendaftar_bantuan'));
     }
-
 }

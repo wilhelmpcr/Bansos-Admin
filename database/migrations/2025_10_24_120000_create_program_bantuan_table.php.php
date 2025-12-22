@@ -6,27 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-         Schema::create('program_bantuan', function (Blueprint $table) {
-        $table->id('program_id'); // primary key
-        $table->string('kode')->unique();
-        $table->string('nama_program');
-        $table->year('tahun');
-        $table->text('deskripsi')->nullable();
-        $table->decimal('anggaran', 15, 2);
-        $table->timestamps();
-    });
+        Schema::create('program_bantuan', function (Blueprint $table) {
+            $table->id('program_id'); // Primary key
+            $table->string('kode', 50)->unique(); // Kode program
+            $table->string('nama_program'); // Nama program
+            $table->text('deskripsi')->nullable(); // Deskripsi program
+            $table->integer('tahun'); // Tahun program
+            $table->decimal('anggaran', 15, 2)->default(0); // Anggaran program
+            $table->string('status')->default('aktif'); // Status program: aktif / nonaktif
+            $table->string('foto')->nullable(); // Foto program
+            $table->timestamps();
+        });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-public function down(): void
-{
-    Schema::dropIfExists('program_bantuan');
-}
+    public function down(): void
+    {
+        Schema::dropIfExists('program_bantuan');
+    }
 };

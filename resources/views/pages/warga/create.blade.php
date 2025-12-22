@@ -7,7 +7,7 @@
     <div class="card shadow-sm">
         <div class="card-body">
 
-            {{-- Tampilkan error validasi --}}
+            {{-- Error validasi --}}
             @if ($errors->any())
                 <div class="alert alert-danger">
                     <ul class="mb-0">
@@ -18,36 +18,35 @@
                 </div>
             @endif
 
-            <form action="{{ route('warga.store') }}" method="POST">
+            {{-- ⬇️ WAJIB enctype --}}
+            <form action="{{ route('warga.store') }}"
+                  method="POST"
+                  enctype="multipart/form-data">
                 @csrf
 
                 <div class="mb-3">
                     <label class="form-label">No KTP</label>
-                    <input type="text"
-                           name="no_ktp"
+                    <input type="text" name="no_ktp"
                            class="form-control"
                            value="{{ old('no_ktp') }}"
-                           required
-                           maxlength="16">
+                           maxlength="16" required>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Nama</label>
-                    <input type="text"
-                           name="nama"
+                    <input type="text" name="nama"
                            class="form-control"
-                           value="{{ old('nama') }}"
-                           required>
+                           value="{{ old('nama') }}" required>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Jenis Kelamin</label>
                     <select name="jenis_kelamin" class="form-select" required>
                         <option value="">-- Pilih --</option>
-                        <option value="L" {{ old('jenis_kelamin') == 'L' ? 'selected' : '' }}>
+                        <option value="L" {{ old('jenis_kelamin')=='L'?'selected':'' }}>
                             Laki-Laki
                         </option>
-                        <option value="P" {{ old('jenis_kelamin') == 'P' ? 'selected' : '' }}>
+                        <option value="P" {{ old('jenis_kelamin')=='P'?'selected':'' }}>
                             Perempuan
                         </option>
                     </select>
@@ -55,36 +54,42 @@
 
                 <div class="mb-3">
                     <label class="form-label">Agama</label>
-                    <input type="text"
-                           name="agama"
+                    <input type="text" name="agama"
                            class="form-control"
-                           value="{{ old('agama') }}"
-                           required>
+                           value="{{ old('agama') }}" required>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Pekerjaan</label>
-                    <input type="text"
-                           name="pekerjaan"
+                    <input type="text" name="pekerjaan"
                            class="form-control"
-                           value="{{ old('pekerjaan') }}"
-                           required>
+                           value="{{ old('pekerjaan') }}" required>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Telp</label>
-                    <input type="text"
-                           name="telp"
+                    <input type="text" name="telp"
                            class="form-control"
                            value="{{ old('telp') }}">
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Email</label>
-                    <input type="email"
-                           name="email"
+                    <input type="email" name="email"
                            class="form-control"
                            value="{{ old('email') }}">
+                </div>
+
+                {{-- ✅ FOTO BUKTI --}}
+                <div class="mb-3">
+                    <label class="form-label">Foto Bukti</label>
+                    <input type="file"
+                           name="foto_bukti"
+                           class="form-control"
+                           accept="image/*">
+                    <small class="text-muted">
+                        JPG / PNG (max 2MB)
+                    </small>
                 </div>
 
                 <div class="d-flex justify-content-end gap-2">

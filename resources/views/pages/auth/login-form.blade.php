@@ -175,6 +175,24 @@
                     <h2 class="mb-2">Masuk ke Sistem</h2>
                     <p class="text-muted mb-4">Gunakan akun terdaftar Anda</p>
 
+                    {{-- ALERT FLASH ERROR --}}
+                    @if(session('error'))
+                        <div class="alert alert-danger">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
+                    {{-- VALIDATION ERRORS --}}
+                    @if($errors->any())
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
                     <form method="POST" action="{{ route('login.process') }}">
                         @csrf
 
@@ -197,7 +215,6 @@
                             <i class="fas fa-sign-in-alt me-1"></i> Login
                         </button>
                     </form>
-
 
                     <div class="text-center mt-4">
                         <small>Belum punya akun?

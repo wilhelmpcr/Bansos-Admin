@@ -6,12 +6,13 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
         Schema::create('warga', function (Blueprint $table) {
             $table->id('warga_id');
             $table->string('no_ktp', 16)->unique();
             $table->string('nama', 100);
+            $table->date('tanggal_lahir')->nullable();
             $table->enum('jenis_kelamin', ['L', 'P']);
             $table->string('agama', 20);
             $table->string('pekerjaan', 50);
@@ -21,7 +22,7 @@ return new class extends Migration
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('warga');
     }

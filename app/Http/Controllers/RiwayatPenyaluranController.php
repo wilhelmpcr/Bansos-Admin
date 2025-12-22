@@ -3,64 +3,39 @@
 namespace App\Http\Controllers;
 
 use App\Models\PendaftarBantuan;
+use App\Models\ProgramBantuan;
 use App\Models\RiwayatPenyaluran;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class RiwayatPenyaluranController extends Controller
 {
     /**
      * Daftar Riwayat Penyaluran
      */
-    public function index()
+    public function index(Request $request)
     {
-        $riwayats = RiwayatPenyaluran::with('pendaftar.warga', 'pendaftar.program')
+        $riwayats = RiwayatPenyaluran::with([
+                'pendaftar.warga',
+                'pendaftar.program',
+            ])
+            ->when($request->program_id, function ($q) use ($request) {
+                $q->whereHas('pendaftar', function ($qp) use ($request) {
+                    $qp->where('program_id', $request->program_id);
+                });
+            })
+            ->when($request->search, function ($q) use ($request) {
+                $q->whereHas('pendaftar.warga', function ($qw) use ($request) {
+                    $qw->where('nama', 'like', "%{$request->search}%");
+                });
+            })
             ->orderBy('tanggal', 'desc')
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
 
-        return view('pages.riwayat_penyaluran.index', compact('riwayats'));
-    }
+        $programs = ProgramBantuan::orderBy('nama_program')->get();
 
-    /**
-     * Form tambah Riwayat Penyaluran
-     */
-    public function create()
-    {
-        $pendaftars = PendaftarBantuan::where('status_seleksi', 'diterima')->get();
-
-        return view('pages.riwayat_penyaluran.create', compact('pendaftars'));
-    }
-
-    /**
-     * Simpan Riwayat Penyaluran baru
-     */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'pendaftar_id' => 'required|exists:pendaftar_bantuan,pendaftar_id',
-            'tanggal'      => 'required|date',
-            'jumlah'       => 'required|numeric|min:0',
-            'keterangan'   => 'nullable|string',
-            'status'       => 'required|in:draft,diproses,selesai,dibatalkan',
-            'file'         => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
-        ]);
-
-        $files = [];
-        if ($request->hasFile('file')) {
-            $files[] = $request->file('file')->store('bukti_penyaluran', 'public');
-        }
-
-        RiwayatPenyaluran::create([
-            'pendaftar_id'  => $request->pendaftar_id,
-            'verifikasi_id' => null,
-            'tanggal'       => $request->tanggal,
-            'jumlah'        => $request->jumlah,
-            'keterangan'    => $request->keterangan,
-            'status'        => $request->status,
-            'dokumen'       => $files,
-        ]);
-
-        return redirect()->route('riwayat_penyaluran.index')
-            ->with('success', 'Riwayat penyaluran berhasil disimpan.');
+        return view('pages.riwayat_penyaluran.index', compact('riwayats', 'programs'));
     }
 
     /**
@@ -68,27 +43,32 @@ class RiwayatPenyaluranController extends Controller
      */
     public function show(RiwayatPenyaluran $riwayat)
     {
-        $riwayat->load('pendaftar.warga', 'pendaftar.program');
+        $riwayat->load([
+            'pendaftar.warga',
+            'pendaftar.program',
+        ]);
 
         return view('pages.riwayat_penyaluran.show', compact('riwayat'));
     }
 
     /**
-     * Form edit Riwayat Penyaluran
+     * Form tambah
      */
-    public function edit(RiwayatPenyaluran $riwayat)
+    public function create()
     {
-        $pendaftars = PendaftarBantuan::where('status_seleksi', 'diterima')->get();
+        $pendaftars = PendaftarBantuan::where('status_seleksi', 'diterima')
+            ->with(['warga', 'program'])
+            ->get();
 
-        return view('pages.riwayat_penyaluran.edit', compact('riwayat', 'pendaftars'));
+        return view('pages.riwayat_penyaluran.create', compact('pendaftars'));
     }
 
     /**
-     * Update Riwayat Penyaluran
+     * Simpan data baru
      */
-    public function update(Request $request, RiwayatPenyaluran $riwayat)
+    public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'pendaftar_id' => 'required|exists:pendaftar_bantuan,pendaftar_id',
             'tanggal'      => 'required|date',
             'jumlah'       => 'required|numeric|min:0',
@@ -97,33 +77,86 @@ class RiwayatPenyaluranController extends Controller
             'file'         => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
         ]);
 
-        $files = $riwayat->dokumen ?? [];
+        $validated['dokumen'] = [];
 
         if ($request->hasFile('file')) {
-            $files[] = $request->file('file')->store('bukti_penyaluran', 'public');
+            $validated['dokumen'][] = $request->file('file')
+                ->store('bukti_penyaluran', 'public');
         }
 
-        $riwayat->update([
-            'pendaftar_id' => $request->pendaftar_id,
-            'tanggal'      => $request->tanggal,
-            'jumlah'       => $request->jumlah,
-            'keterangan'   => $request->keterangan,
-            'status'       => $request->status,
-            'dokumen'      => $files,
+        RiwayatPenyaluran::create($validated);
+
+        return redirect()
+            ->route('riwayat_penyaluran.index')
+            ->with('success', 'Riwayat penyaluran berhasil disimpan.');
+    }
+
+    /**
+     * Form edit
+     */
+    public function edit(RiwayatPenyaluran $riwayat)
+    {
+        $riwayat->load([
+            'pendaftar.warga',
+            'pendaftar.program',
         ]);
 
-        return redirect()->route('riwayat_penyaluran.index')
+        $pendaftars = PendaftarBantuan::where('status_seleksi', 'diterima')
+            ->with(['warga', 'program'])
+            ->get();
+
+        return view('pages.riwayat_penyaluran.edit', compact('riwayat', 'pendaftars'));
+    }
+
+    /**
+     * Update data
+     */
+    public function update(Request $request, RiwayatPenyaluran $riwayat)
+    {
+        $validated = $request->validate([
+            'pendaftar_id' => 'required|exists:pendaftar_bantuan,pendaftar_id',
+            'tanggal'      => 'required|date',
+            'jumlah'       => 'required|numeric|min:0',
+            'keterangan'   => 'nullable|string',
+            'status'       => 'required|in:draft,diproses,selesai,dibatalkan',
+            'file'         => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+        ]);
+
+        // pastikan dokumen array
+        $dokumen = is_array($riwayat->dokumen) ? $riwayat->dokumen : [];
+
+        if ($request->hasFile('file')) {
+            $dokumen[] = $request->file('file')
+                ->store('bukti_penyaluran', 'public');
+        }
+
+        $validated['dokumen'] = $dokumen;
+
+        $riwayat->update($validated);
+
+        return redirect()
+            ->route('riwayat_penyaluran.index')
             ->with('success', 'Riwayat penyaluran berhasil diperbarui.');
     }
 
     /**
-     * Hapus Riwayat Penyaluran
+     * Hapus data
      */
     public function destroy(RiwayatPenyaluran $riwayat)
     {
+        // hapus file fisik
+        if (is_array($riwayat->dokumen)) {
+            foreach ($riwayat->dokumen as $file) {
+                if (Storage::disk('public')->exists($file)) {
+                    Storage::disk('public')->delete($file);
+                }
+            }
+        }
+
         $riwayat->delete();
 
-        return redirect()->route('riwayat_penyaluran.index')
+        return redirect()
+            ->route('riwayat_penyaluran.index')
             ->with('success', 'Riwayat penyaluran berhasil dihapus.');
     }
 }

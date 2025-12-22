@@ -6,7 +6,9 @@
     <h2 class="mb-4 text-center">Data Warga</h2>
 
     <div class="mb-3 text-end">
-        <a href="{{ route('warga.create') }}" class="btn btn-primary">+ Tambah Warga</a>
+        <a href="{{ route('warga.create') }}" class="btn btn-primary">
+            + Tambah Warga
+        </a>
     </div>
 
     {{-- Pesan sukses --}}
@@ -18,6 +20,7 @@
 
     <div class="table-responsive">
 
+        {{-- FILTER & SEARCH --}}
         <form method="GET" action="{{ route('warga.index') }}" class="mb-3">
             <div class="row g-2">
 
@@ -59,7 +62,8 @@
             </div>
         </form>
 
-        <table class="table table-bordered table-striped bg-white shadow-sm">
+        {{-- TABEL --}}
+        <table class="table table-bordered table-striped bg-white shadow-sm align-middle">
             <thead class="table-dark">
                 <tr>
                     <th class="text-center" width="50">No</th>
@@ -71,6 +75,7 @@
                     <th>Pekerjaan</th>
                     <th>Telp</th>
                     <th>Email</th>
+                    <th class="text-center">Foto Bukti</th>
                     <th class="text-center" width="160">Aksi</th>
                 </tr>
             </thead>
@@ -92,7 +97,22 @@
                         <td>{{ $warga->telp ?? '-' }}</td>
                         <td>{{ $warga->email ?? '-' }}</td>
 
-                        {{-- AKSI (DETAIL + EDIT + HAPUS) --}}
+                        {{-- FOTO BUKTI --}}
+                        <td class="text-center">
+                            @if ($warga->foto_bukti)
+                                <a href="{{ asset('storage/' . $warga->foto_bukti) }}"
+                                   target="_blank">
+                                    <img src="{{ asset('storage/' . $warga->foto_bukti) }}"
+                                         width="45"
+                                         class="img-thumbnail"
+                                         alt="Foto Bukti">
+                                </a>
+                            @else
+                                <span class="text-muted">-</span>
+                            @endif
+                        </td>
+
+                        {{-- AKSI --}}
                         <td class="text-center">
                             <div class="d-flex justify-content-center gap-1">
                                 <a href="{{ route('warga.show', $warga->warga_id) }}"
@@ -121,7 +141,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="10" class="text-center text-muted">
+                        <td colspan="11" class="text-center text-muted">
                             Belum ada data warga
                         </td>
                     </tr>
@@ -129,7 +149,7 @@
             </tbody>
         </table>
 
-        {{-- Pagination --}}
+        {{-- PAGINATION --}}
         <div class="mt-3">
             {{ $dataWarga->links('pagination::bootstrap-5') }}
         </div>

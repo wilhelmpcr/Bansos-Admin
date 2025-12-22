@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PendaftarBantuanController;
+use App\Http\Controllers\PenerimaBantuanController;
 use App\Http\Controllers\ProgramBantuanController;
 use App\Http\Controllers\RiwayatPenyaluranController;
 use App\Http\Controllers\UserController;
@@ -15,122 +16,68 @@ use Illuminate\Support\Facades\Route;
 | TEST ROUTE
 |--------------------------------------------------------------------------
 */
-Route::get('/tes', function () {
-    return 'ROUTE OK';
-});
+Route::get('/tes', fn () => 'ROUTE OK');
 
 /*
 |--------------------------------------------------------------------------
 | PUBLIC ROUTE
 |--------------------------------------------------------------------------
 */
-Route::view('/info-program', 'info-program')
-    ->name('programs.info');
+Route::view('/info-program', 'info-program')->name('programs.info');
 
 /*
 |--------------------------------------------------------------------------
-| LOGIN ROUTE
-|--------------------------------------------------------------------------
-*/
-Route::get('/login', [AuthController::class, 'showLogin'])
-    ->middleware('guest')
-    ->name('login');
-
-/*
-|--------------------------------------------------------------------------
-| AUTH ROUTES (GUEST)
+| AUTH ROUTE (GUEST)
 |--------------------------------------------------------------------------
 */
 Route::middleware('guest')->group(function () {
 
-    Route::post('/login', [AuthController::class, 'login'])
-        ->name('login.process');
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.process');
 
-    Route::get('/register', [AuthController::class, 'showRegister'])
-        ->name('register');
-
-    Route::post('/register', [AuthController::class, 'register'])
-        ->name('register.process');
+    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+    Route::post('/register', [AuthController::class, 'register'])->name('register.process');
 });
 
 /*
 |--------------------------------------------------------------------------
-| AUTHENTICATED ROUTES
+| AUTH ROUTE (LOGIN)
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
 
-    /*
-    |--------------------------------------------------------------------------
-    | DASHBOARD
-    |--------------------------------------------------------------------------
-    */
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
 
-    /*
-    |--------------------------------------------------------------------------
-    | PROGRAM BANTUAN
-    |--------------------------------------------------------------------------
-    */
+    Route::resource('warga', WargaController::class)
+        ->names('warga');
+
     Route::resource('program-bantuan', ProgramBantuanController::class)
-        ->names('program_bantuan')
-        ->parameters([
-            'program-bantuan' => 'program_id',
-        ]);
+        ->names('program_bantuan');
 
-    /*
-    |--------------------------------------------------------------------------
-    | USER
-    |--------------------------------------------------------------------------
-    */
-    Route::resource('users', UserController::class)
-        ->names('user');
+    Route::resource('penerima-bantuan', PenerimaBantuanController::class)
+        ->names('penerima_bantuan');
 
-    /*
-    |--------------------------------------------------------------------------
-    | RIWAYAT PENYALURAN
-    |--------------------------------------------------------------------------
-    */
-    Route::resource('riwayat-penyaluran', RiwayatPenyaluranController::class)
-        ->names('riwayat_penyaluran');
-
-    /*
-    |--------------------------------------------------------------------------
-    | PENDAFTAR BANTUAN
-    |--------------------------------------------------------------------------
-    */
     Route::resource('pendaftar-bantuan', PendaftarBantuanController::class)
         ->names('pendaftar_bantuan');
 
-    /*
-    |--------------------------------------------------------------------------
-    | VERIFIKASI LAPANGAN  ✅ FIX FINAL
-    |--------------------------------------------------------------------------
-    */
-    Route::resource(
-        'verifikasi-lapangan',
-        VerifikasiLapanganController::class
-    )->names('verifikasi_lapangan');
-    /*
-    |--------------------------------------------------------------------------
-    | WARGA
-    |--------------------------------------------------------------------------
-    */
-    Route::resource('warga', WargaController::class);
+    Route::resource('verifikasi-lapangan', VerifikasiLapanganController::class)
+        ->names('verifikasi_lapangan');
 
-    /*
-    |--------------------------------------------------------------------------
-    | LOGOUT
-    |--------------------------------------------------------------------------
-    */
+    Route::resource('riwayat-penyaluran', RiwayatPenyaluranController::class)
+        ->parameters(['riwayat-penyaluran' => 'riwayat'])
+        ->names('riwayat_penyaluran');
+
+    Route::resource('users', UserController::class)
+        ->names('user');
+
     Route::post('/logout', [AuthController::class, 'logout'])
         ->name('logout');
 });
 
 /*
 |--------------------------------------------------------------------------
-| DEFAULT ROUTE
+| ROOT REDIRECT
 |--------------------------------------------------------------------------
 */
 Route::get('/', function () {

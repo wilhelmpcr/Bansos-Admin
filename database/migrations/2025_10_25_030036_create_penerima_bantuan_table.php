@@ -6,26 +6,38 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-         Schema::create('penerima_bantuan', function (Blueprint $table) {
-        $table->id('penerima_id');
-        $table->unsignedBigInteger('program_id');
-        $table->unsignedBigInteger('warga_id');
-        $table->string('keterangan')->nullable();
-        $table->timestamps();
+        Schema::create('penerima_bantuan', function (Blueprint $table) {
+            $table->id('penerima_id');
 
-        $table->foreign('program_id')->references('program_id')->on('program_bantuan')->onDelete('cascade');
-        $table->foreign('warga_id')->references('warga_id')->on('warga')->onDelete('cascade');
-    });
+            // Kolom data penerima
+            $table->string('nama');
+            $table->string('nik', 16)->unique();
+            $table->string('alamat')->nullable();
+            $table->date('tanggal_daftar')->nullable();
+
+            // Relasi
+            $table->foreignId('warga_id')
+                ->nullable()
+                ->constrained('warga', 'warga_id')
+                ->cascadeOnDelete();
+
+            $table->foreignId('program_id')
+                ->constrained('program_bantuan', 'program_id')
+                ->cascadeOnDelete();
+
+            // Kolom tambahan
+            $table->text('keterangan')->nullable();
+            $table->string('status')->default('menunggu');
+
+            // ✅ TAMBAHAN FOTO (INI YANG KURANG)
+            $table->string('foto')->nullable();
+
+            $table->timestamps();
+        });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('penerima_bantuan');

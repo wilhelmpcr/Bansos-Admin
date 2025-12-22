@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\User;
@@ -17,7 +16,7 @@ class AuthController extends Controller
     public function showLogin()
     {
         if (Auth::check()) {
-            return redirect()->route('dashboard');
+            return view('pages.auth.login-form')->with('error', 'Anda sudah login! Silakan logout terlebih dahulu jika ingin login dengan akun lain.');
         }
 
         return view('pages.auth.login-form');
@@ -79,7 +78,7 @@ class AuthController extends Controller
             'password' => [
                 'required',
                 'min:6',
-                'regex:/[A-Z]/'
+                'regex:/[A-Z]/',
             ],
         ]);
 

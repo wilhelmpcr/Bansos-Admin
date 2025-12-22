@@ -2,47 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\ProgramBantuan;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProgramBantuanController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
-        // Kolom yang boleh difilter (sesuaikan dengan kebutuhanmu)
-        // Misal: filter berdasarkan nama_program dan tahun
-        $filterableColumns = ['nama_program', 'tahun'];
+        $filterableColumns  = ['nama_program', 'tahun'];
+        $searchableColumns = ['kode', 'nama_program', 'tahun', 'deskripsi'];
 
-        // 2️⃣ Kolom yang boleh difilter (dropdown)
-    $filterableColumns = ['nama_program', 'tahun'];
-
-    // 2️⃣ Kolom yang ikut di-search (mirip contoh first_name,last_name,email)
-    // Sesuai tabel program_bantuan: kode, nama_program, tahun, deskripsi, anggaran
-    $searchableColumns = ['kode', 'nama_program', 'tahun', 'deskripsi'];
-
-        // Mirip dengan: $data['dataWarga'] = ... tapi untuk ProgramBantuan
         $programs = ProgramBantuan::query()
             ->filter($request, $filterableColumns)
+            ->search($request, $searchableColumns)
+            ->orderBy('program_id', 'desc')
             ->paginate(10)
             ->withQueryString();
 
         return view('pages.program_bantuan.index', compact('programs'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view('pages.program_bantuan.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -51,26 +36,34 @@ class ProgramBantuanController extends Controller
             'tahun'        => 'required|digits:4|integer',
             'deskripsi'    => 'nullable|string',
             'anggaran'     => 'required|numeric|min:0',
+            'foto'         => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
+
+        if ($request->hasFile('foto')) {
+            $validated['foto'] = $request->file('foto')
+                ->store('program_foto', 'public');
+        }
 
         ProgramBantuan::create($validated);
 
-        return redirect()->route('program_bantuan.index')
-                         ->with('success', 'Program Bantuan berhasil ditambahkan!');
+        return redirect()
+            ->route('program_bantuan.index')
+            ->with('success', 'Program Bantuan berhasil ditambahkan!');
     }
 
-    public function show(string $id)
+    public function show($id)
     {
-        // Optional: implement jika butuh menampilkan detail
+        $program = ProgramBantuan::findOrFail($id);
+        return view('pages.program_bantuan.show', compact('program'));
     }
 
-    public function edit(string $id)
+    public function edit($id)
     {
         $program = ProgramBantuan::findOrFail($id);
         return view('pages.program_bantuan.edit', compact('program'));
     }
 
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
         $program = ProgramBantuan::findOrFail($id);
 
@@ -80,20 +73,37 @@ class ProgramBantuanController extends Controller
             'tahun'        => 'required|digits:4|integer',
             'deskripsi'    => 'nullable|string',
             'anggaran'     => 'required|numeric|min:0',
+            'foto'         => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
+
+        if ($request->hasFile('foto')) {
+            if ($program->foto && Storage::disk('public')->exists($program->foto)) {
+                Storage::disk('public')->delete($program->foto);
+            }
+
+            $validated['foto'] = $request->file('foto')
+                ->store('program_foto', 'public');
+        }
 
         $program->update($validated);
 
-        return redirect()->route('program_bantuan.index')
-                         ->with('success', 'Program Bantuan berhasil diperbarui!');
+        return redirect()
+            ->route('program_bantuan.index')
+            ->with('success', 'Program Bantuan berhasil diperbarui!');
     }
 
-    public function destroy(string $id)
+    public function destroy($id)
     {
         $program = ProgramBantuan::findOrFail($id);
+
+        if ($program->foto && Storage::disk('public')->exists($program->foto)) {
+            Storage::disk('public')->delete($program->foto);
+        }
+
         $program->delete();
 
-        return redirect()->route('program_bantuan.index')
-                         ->with('success', 'Program Bantuan berhasil dihapus!');
+        return redirect()
+            ->route('program_bantuan.index')
+            ->with('success', 'Program Bantuan berhasil dihapus!');
     }
 }

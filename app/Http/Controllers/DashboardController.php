@@ -2,19 +2,30 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth;
+use App\Models\VerifikasiLapangan;
+use App\Models\RiwayatPenyaluran;
+use App\Models\ProgramBantuan;
+use App\Models\PendaftarBantuan;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        $user = Auth::user();
+        // Ambil total data untuk widget
+        $totalVerifikasi = VerifikasiLapangan::count();
+        $totalRiwayat = RiwayatPenyaluran::count();
+        $totalProgram = ProgramBantuan::count();
+        $totalPendaftar = PendaftarBantuan::count();
 
-        if (!$user) {
-            return redirect()->route('login');
-        }
+        // Ambil 5 pendaftar terbaru untuk tabel recent sales
+        $latestPendaftar = PendaftarBantuan::latest()->take(5)->get();
 
-        // SEMUA ROLE PAKAI DASHBOARD ADMIN
-        return view('admin.dashboard');
+        return view('admin.dashboard', compact(
+            'totalVerifikasi',
+            'totalRiwayat',
+            'totalProgram',
+            'totalPendaftar',
+            'latestPendaftar'
+        ));
     }
 }

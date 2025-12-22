@@ -15,54 +15,77 @@ class PendaftarBantuan extends Model
         'warga_id',
         'program_id',
         'status_seleksi',
+        'tanggal_daftar',
     ];
 
+    // ===============================
+    // RELASI
+    // ===============================
+
+    // Relasi ke Warga
     public function warga()
     {
         return $this->belongsTo(Warga::class, 'warga_id', 'warga_id');
     }
 
+    // Relasi ke Program Bantuan
     public function program()
     {
         return $this->belongsTo(ProgramBantuan::class, 'program_id', 'program_id');
     }
 
-    /**
-     * Scope filter untuk kolom tertentu (dropdown/status, dll).
-     */
-    public function scopeFilter(Builder $query, Request $request, array $filterableColumns): Builder
+    // ✅ RELASI KE PENERIMA BANTUAN (INI YANG KURANG)
+    public function penerima()
     {
+        return $this->hasOne(
+            PenerimaBantuan::class,
+            'warga_id', // FK di tabel penerima_bantuan
+            'warga_id'  // PK/kolom di tabel ini
+        );
+    }
+
+    // ===============================
+    // QUERY SCOPE
+    // ===============================
+
+    /**
+     * Scope filter kolom
+     */
+    public function scopeFilter(
+        Builder $query,
+        Request $request,
+        array $filterableColumns
+    ): Builder {
         foreach ($filterableColumns as $column) {
             if ($request->filled($column)) {
                 $query->where($column, $request->input($column));
             }
         }
-
         return $query;
     }
 
     /**
-     * Scope search untuk pencarian bebas dengan keyword.
+     * Scope search keyword
      */
-    public function scopeSearch(Builder $query, Request $request, array $columns): Builder
-    {
+    public function scopeSearch(
+        Builder $query,
+        Request $request,
+        array $columns
+    ): Builder {
         if ($request->filled('search')) {
-            $search = $request->search;
+            $search = $request->input('search');
 
             $query->where(function ($q) use ($search, $columns) {
-                // search pada kolom langsung di tabel pendaftar_bantuan
                 foreach ($columns as $column) {
-                    $q->orWhere($column, 'LIKE', '%' . $search . '%');
+                    $q->orWhere($column, 'LIKE', "%{$search}%");
                 }
 
-                // search ke relasi warga (nama)
                 $q->orWhereHas('warga', function ($qw) use ($search) {
-                    $qw->where('nama', 'LIKE', '%' . $search . '%');
+                    $qw->where('nama', 'LIKE', "%{$search}%");
                 });
 
-                // search ke relasi program (nama_program)
                 $q->orWhereHas('program', function ($qp) use ($search) {
-                    $qp->where('nama_program', 'LIKE', '%' . $search . '%');
+                    $qp->where('nama_program', 'LIKE', "%{$search}%");
                 });
             });
         }

@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use App\Models\PeristiwaKelahiran;
 
 class Warga extends Model
 {
@@ -14,6 +13,8 @@ class Warga extends Model
 
     protected $table = 'warga';
     protected $primaryKey = 'warga_id';
+    public $incrementing = true;
+    protected $keyType = 'int';
 
     protected $fillable = [
         'no_ktp',
@@ -23,11 +24,19 @@ class Warga extends Model
         'pekerjaan',
         'telp',
         'email',
+        'foto_bukti', // ✅ WAJIB ADA
     ];
 
-    // FILTER
-    public function scopeFilter(Builder $query, Request $request, array $filterableColumns): Builder
-    {
+    /**
+     * =========================
+     * FILTER DATA
+     * =========================
+     */
+    public function scopeFilter(
+        Builder $query,
+        Request $request,
+        array $filterableColumns
+    ): Builder {
         foreach ($filterableColumns as $column) {
             if ($request->filled($column)) {
                 $query->where($column, $request->input($column));
@@ -37,15 +46,22 @@ class Warga extends Model
         return $query;
     }
 
-    // SEARCH
-    public function scopeSearch(Builder $query, Request $request, array $columns): Builder
-    {
+    /**
+     * =========================
+     * SEARCH DATA
+     * =========================
+     */
+    public function scopeSearch(
+        Builder $query,
+        Request $request,
+        array $columns
+    ): Builder {
         if ($request->filled('search')) {
-            $search = $request->search;
+            $search = $request->input('search');
 
             $query->where(function ($q) use ($search, $columns) {
                 foreach ($columns as $column) {
-                    $q->orWhere($column, 'LIKE', '%' . $search . '%');
+                    $q->orWhere($column, 'LIKE', "%{$search}%");
                 }
             });
         }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
@@ -19,12 +20,12 @@ class ProgramBantuan extends Model
         'tahun',
         'deskripsi',
         'anggaran',
+        'foto',
     ];
 
-    // 🔹 FILTER (untuk dropdown nama_program, tahun)
-    public function scopeFilter(Builder $query, Request $request, array $filterableColumns): Builder
+    public function scopeFilter(Builder $query, Request $request, array $columns): Builder
     {
-        foreach ($filterableColumns as $column) {
+        foreach ($columns as $column) {
             if ($request->filled($column)) {
                 $query->where($column, $request->input($column));
             }
@@ -33,7 +34,6 @@ class ProgramBantuan extends Model
         return $query;
     }
 
-    // 🔹 SEARCH (untuk input text search)
     public function scopeSearch(Builder $query, Request $request, array $columns): Builder
     {
         if ($request->filled('search')) {
@@ -41,18 +41,11 @@ class ProgramBantuan extends Model
 
             $query->where(function ($q) use ($search, $columns) {
                 foreach ($columns as $column) {
-                    $q->orWhere($column, 'LIKE', '%' . $search . '%');
+                    $q->orWhere($column, 'LIKE', "%{$search}%");
                 }
             });
         }
 
         return $query;
     }
-    public function show($id)
-    {
-        $program = ProgramBantuan::findOrFail($id);
-
-        return view('pages.program_bantuan.show', compact('program'));
-    }
-
 }

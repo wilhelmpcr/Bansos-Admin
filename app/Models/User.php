@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable
 {
@@ -17,6 +18,8 @@ class User extends Authenticatable
         'email',
         'password',
         'gender',
+        'role',
+        'foto',
     ];
 
     protected $hidden = [
@@ -24,18 +27,35 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    protected function casts(): array
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+    ];
+
+    /**
+     * 🔍 Scope Search
+     */
+    public function scopeSearch(Builder $query, Request $request, array $columns): Builder
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        if ($request->filled('search')) {
+            $search = $request->search;
+
+            $query->where(function ($q) use ($search, $columns) {
+                foreach ($columns as $column) {
+                    $q->orWhere($column, 'LIKE', "%{$search}%");
+                }
+            });
+        }
+
+        return $query;
     }
 
-    // 🔹 Scope Filter untuk dropdown / filter tertentu
-    public function scopeFilter(Builder $query, Request $request, array $filterableColumns): Builder
+    /**
+     * 🎯 Scope Filter
+     */
+    public function scopeFilter(Builder $query, Request $request, array $columns): Builder
     {
-        foreach ($filterableColumns as $column) {
+        foreach ($columns as $column) {
             if ($request->filled($column)) {
                 $query->where($column, $request->input($column));
             }
@@ -44,19 +64,16 @@ class User extends Authenticatable
         return $query;
     }
 
-    // 🔹 Scope Search untuk input text search
-    public function scopeSearch(Builder $query, Request $request, array $searchableColumns): Builder
+    /**
+     * 🖼️ Accessor Foto URL (AMAN + AUTO DEFAULT)
+     */
+    public function getFotoUrlAttribute(): string
     {
-        if ($request->filled('search')) {
-            $search = $request->search;
-
-            $query->where(function ($q) use ($search, $searchableColumns) {
-                foreach ($searchableColumns as $column) {
-                    $q->orWhere($column, 'LIKE', '%' . $search . '%');
-                }
-            });
+        if ($this->foto && Storage::disk('public')->exists($this->foto)) {
+            return asset('storage/' . $this->foto);
         }
 
-        return $query;
+        // default yg BENAR-BENAR ADA
+        return asset('assets-admin/img/user.jpg');
     }
 }

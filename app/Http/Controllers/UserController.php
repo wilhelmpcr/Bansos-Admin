@@ -1,31 +1,40 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $searchableColumns = ['name', 'email'];
+        $users = User::query();
 
-        $users = User::query()->search($request, ['name', 'email']);
+        // 🔍 SEARCH
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $users->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
 
-// Filter email domain
-        if ($request->email_domain == 'gmail') {
+        // 📧 FILTER EMAIL DOMAIN
+        if ($request->email_domain === 'gmail') {
             $users->where('email', 'like', '%@gmail.com');
-        } elseif ($request->email_domain == 'example') {
+        } elseif ($request->email_domain === 'example') {
             $users->where('email', 'like', '%@example.com');
         }
 
-// Filter role
-        if ($request->role) {
+        // 👤 FILTER ROLE
+        if ($request->filled('role')) {
             $users->where('role', $request->role);
         }
 
-        $users = $users->paginate(10)->withQueryString();
+        $users = $users->latest()->paginate(10)->withQueryString();
 
         return view('pages.user.index', compact('users'));
     }
@@ -37,23 +46,33 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|unique:users,email',
             'gender'   => 'required|in:male,female',
             'password' => 'required|string|min:6|confirmed',
-            'role'     => 'required|in:user,admin', // ⬅️ validasi role
+            'role'     => 'required|in:user,admin',
+            'foto'     => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
-            'gender'   => $request->gender,
-            'password' => Hash::make($request->password),
-            'role'     => $request->role, // ⬅️ simpan role
-        ]);
+        $validated['password'] = Hash::make($validated['password']);
 
-        return redirect()->route('user.index')->with('success', 'User berhasil ditambahkan!');
+        // 📷 UPLOAD FOTO
+        if ($request->hasFile('foto')) {
+            $validated['foto'] = $request->file('foto')->store('users', 'public');
+        }
+
+        User::create($validated);
+
+        return redirect()
+            ->route('user.index')
+            ->with('success', 'User berhasil ditambahkan!');
+    }
+
+    public function show($id)
+    {
+        $user = User::findOrFail($id);
+        return view('pages.user.show', compact('user'));
     }
 
     public function edit($id)
@@ -66,41 +85,51 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
 
-        $request->validate([
+        $validated = $request->validate([
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|unique:users,email,' . $id,
             'gender'   => 'required|in:male,female',
             'password' => 'nullable|string|min:6|confirmed',
-            'role'     => 'required|in:user,admin', // ⬅️ validasi role
+            'role'     => 'required|in:user,admin',
+            'foto'     => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        $data = [
-            'name'   => $request->name,
-            'email'  => $request->email,
-            'gender' => $request->gender,
-            'role'   => $request->role, // ⬅️ update role
-        ];
-
+        // 🔐 PASSWORD (OPSIONAL)
         if ($request->filled('password')) {
-            $data['password'] = Hash::make($request->password);
+            $validated['password'] = Hash::make($validated['password']);
+        } else {
+            unset($validated['password']);
         }
 
-        $user->update($data);
+        // 📷 GANTI FOTO
+        if ($request->hasFile('foto')) {
 
-        return redirect()->route('user.index')->with('success', 'User berhasil diperbarui!');
+            if ($user->foto && Storage::disk('public')->exists($user->foto)) {
+                Storage::disk('public')->delete($user->foto);
+            }
+
+            $validated['foto'] = $request->file('foto')->store('users', 'public');
+        }
+
+        $user->update($validated);
+
+        return redirect()
+            ->route('user.index')
+            ->with('success', 'User berhasil diperbarui!');
     }
 
     public function destroy($id)
     {
         $user = User::findOrFail($id);
+
+        if ($user->foto && Storage::disk('public')->exists($user->foto)) {
+            Storage::disk('public')->delete($user->foto);
+        }
+
         $user->delete();
 
-        return redirect()->route('user.index')->with('success', 'Data user berhasil dihapus');
+        return redirect()
+            ->route('user.index')
+            ->with('success', 'Data user berhasil dihapus!');
     }
-        public function show($id)
-    {
-        $user = User::findOrFail($id);
-        return view('pages.user.show', compact('user'));
-    }
-
 }
