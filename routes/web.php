@@ -11,11 +11,8 @@ use App\Http\Controllers\VerifikasiLapanganController;
 use App\Http\Controllers\WargaController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('pages.auth.login-form');
-});
-
-/*
+Route::get('/',[AuthController::class,'showLogin']);
+/*x
 |--------------------------------------------------------------------------
 | TEST ROUTE
 |--------------------------------------------------------------------------
